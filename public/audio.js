@@ -3,9 +3,9 @@ const TICK_MS = 500;
 
 export const TRACKS = {
   cabina: { nombre: 'Cabina tranquila', detalle: 'Un zumbido grave y parejo, como el de la cabina en pleno vuelo.' },
-  arpa: { nombre: 'Arpa al atardecer', detalle: 'Notas de arpa que suben y bajan despacio, sobre acordes suaves.' },
   acordes: { nombre: 'Acordes para respirar', detalle: 'Acordes lentos que suben 4 segundos y bajan 6: respira con ellos.' },
   campanas: { nombre: 'Campanas lejanas', detalle: 'Notas suaves y espaciadas, con eco.' },
+  arpa: { nombre: 'Arpa al atardecer', detalle: 'Notas de arpa que suben y bajan despacio, sobre acordes suaves.' },
 };
 
 function noiseBuffer(ctx, seconds) {

@@ -1,4 +1,4 @@
-const CACHE = 'aeromind-v2';
+const CACHE = 'aeromind-v3';
 const ASSETS = [
   './',
   './index.html',
