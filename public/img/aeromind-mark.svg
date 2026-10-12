@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="am-sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0B1B3A"/>
+      <stop offset="1" stop-color="#1E3A8A"/>
+    </linearGradient>
+    <linearGradient id="am-trail" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#C4B5FD"/>
+      <stop offset="1" stop-color="#67E8F9"/>
+    </linearGradient>
+  </defs>
+  <circle cx="256" cy="256" r="244" fill="url(#am-sky)"/>
+  <circle cx="150" cy="150" r="5" fill="#E0E7FF" opacity=".8"/>
+  <circle cx="214" cy="104" r="3.5" fill="#E0E7FF" opacity=".6"/>
+  <circle cx="400" cy="372" r="4" fill="#E0E7FF" opacity=".6"/>
+  <path d="M92 330C130 282 170 282 206 322S268 362 305 253" fill="none" stroke="url(#am-trail)" stroke-width="20" stroke-linecap="round"/>
+  <path transform="translate(352 206) rotate(45) scale(5.2) translate(-12 -12)" fill="#FFFFFF" d="M12 1.5C12.9 1.5 13.5 2.4 13.5 3.6V9.4L22.5 14.6V16.6L13.5 13.9V19.2L16.2 21.1V22.6L12 21.5L7.8 22.6V21.1L10.5 19.2V13.9L1.5 16.6V14.6L10.5 9.4V3.6C10.5 2.4 11.1 1.5 12 1.5Z"/>
+</svg>

@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="AeroMind: música, respiración y una guía sencilla de tu vuelo para viajar tranquilo. Funciona sin internet.">
+  <meta name="theme-color" content="#0b1530">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; manifest-src 'self'; media-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <title>AeroMind · Vuela tranquilo</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="img/aeromind-mark.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <svg class="sprite" aria-hidden="true">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="i-plane" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 1.5c.9 0 1.5.9 1.5 2.1v5.8l9 5.2v2l-9-2.7v5.3l2.7 1.9v1.5L12 21.5l-4.2 1.1v-1.5l2.7-1.9v-5.3l-9 2.7v-2l9-5.2V3.6c0-1.2.6-2.1 1.5-2.1z"/></symbol>
+    <symbol id="i-breath" viewBox="0 0 24 24"><path d="M3 8h11a3 3 0 1 0-3-3"/><path d="M3 12h15a3 3 0 1 1-3 3"/><path d="M3 16h7"/></symbol>
+    <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></symbol>
+    <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-3a2 2 0 0 0 0-4z"/><path d="M14 6v2M14 11v2M14 16v2"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M8 5.5v13l11-6.5z"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M7 5h4v14H7zM13 5h4v14h-4z"/></symbol>
+  </svg>
+
+  <header class="topbar">
+    <img src="img/aeromind-mark.svg" alt="" width="40" height="40">
+    <div class="brand">
+      <span class="name">Aero<span>Mind</span></span>
+      <span class="slogan">Vuela tranquilo, disfruta el camino</span>
+    </div>
+    <span id="offline-badge" class="badge" hidden>Lista sin internet</span>
+  </header>
+
+  <p id="net-status" class="net-status" role="status" hidden>Sin conexión: AeroMind sigue funcionando.</p>
+
+  <main>
+    <section id="inicio" class="view" data-title="Inicio" aria-labelledby="t-inicio">
+      <div class="hero">
+        <h1 id="t-inicio" tabindex="-1">Vuela tranquilo</h1>
+        <p>Música, respiración y una guía sencilla de tu vuelo. Todo funciona sin internet.</p>
+      </div>
+
+      <a class="card link" href="#vuelo">
+        <span class="icon sky"><svg><use href="#i-plane"/></svg></span>
+        <span><strong>Tu vuelo paso a paso</strong><small>Qué pasa y qué es normal sentir en cada fase.</small></span>
+      </a>
+      <a class="card link" href="#respira">
+        <span class="icon lavender"><svg><use href="#i-breath"/></svg></span>
+        <span><strong>Respira</strong><small>Respiración guiada para calmar los nervios.</small></span>
+      </a>
+      <a class="card link" href="#musica">
+        <span class="icon teal"><svg><use href="#i-music"/></svg></span>
+        <span><strong>Música para volar</strong><small>Sonidos relajantes creados por la app.</small></span>
+      </a>
+
+      <div class="card">
+        <h2>Antes de despegar</h2>
+        <ol class="steps">
+          <li>Abre AeroMind una vez con internet: queda guardada en tu celular.</li>
+          <li>Activa el modo avión tranquilo: la app seguirá funcionando.</li>
+          <li>Ten tus audífonos a mano para la música.</li>
+        </ol>
+        <button id="install" class="button" type="button" hidden>Instalar AeroMind</button>
+        <p id="ios-tip" class="hint" hidden>En iPhone: toca Compartir y luego “Agregar a inicio”.</p>
+      </div>
+
+      <p class="footnote">Prototipo escolar · Proyecto de Emprendimiento 2026. No cobra y no guarda datos personales.</p>
+    </section>
+
+    <section id="vuelo" class="view" data-title="Tu vuelo" aria-labelledby="t-vuelo" hidden>
+      <h1 id="t-vuelo" tabindex="-1">Tu vuelo paso a paso</h1>
+      <p class="lead">Toca cada fase para saber qué pasa y qué es normal sentir u oír.</p>
+      <div class="phases">
+        <details>
+          <summary><span class="num">1</span>Embarque</summary>
+          <dl>
+            <dt>Qué pasa</dt><dd>Los pasajeros se acomodan, la tripulación cierra las puertas y explica las instrucciones de seguridad.</dd>
+            <dt>Qué puedes oír</dt><dd>Golpes de la carga del equipaje y el zumbido del aire acondicionado.</dd>
+            <dt>Consejo</dt><dd>Ubica tu salida más cercana: saber dónde está ayuda a sentirte en control.</dd>
+          </dl>
+        </details>
+        <details>
+          <summary><span class="num">2</span>Rodaje</summary>
+          <dl>
+            <dt>Qué pasa</dt><dd>El avión avanza despacio por las calles del aeropuerto hasta la pista. Puede detenerse varias veces mientras espera su turno.</dd>
+            <dt>Qué puedes sentir</dt><dd>Pequeños saltos por las juntas del pavimento y frenadas suaves.</dd>
+            <dt>Consejo</dt><dd>Buen momento para empezar la respiración “Calma 4-6”.</dd>
+          </dl>
+        </details>
+        <details>
+          <summary><span class="num">3</span>Despegue</summary>
+          <dl>
+            <dt>Qué pasa</dt><dd>Los motores aumentan su potencia y el avión acelera por la pista hasta tener la velocidad necesaria para elevarse.</dd>
+            <dt>Qué puedes sentir u oír</dt><dd>Sentirás que el asiento te empuja hacia atrás y el ruido de los motores sube. Poco después se escucha un golpe sordo: es el tren de aterrizaje, que se guarda.</dd>
+            <dt>Dato de La Paz</dt><dd>En El Alto, a más de 4.000 metros de altura, el aire es menos denso, así que el avión recorre más pista antes de despegar. Es normal.</dd>
+          </dl>
+        </details>
+        <details>
+          <summary><span class="num">4</span>Ascenso</summary>
+          <dl>
+            <dt>Qué pasa</dt><dd>El avión sube hacia su altura de crucero. Al poco tiempo, los pilotos reducen un poco la potencia de los motores.</dd>
+            <dt>Qué puedes sentir u oír</dt><dd>Al bajar la potencia puede parecer que el avión se detiene, pero sigue subiendo. También oirás un zumbido: son los flaps, partes de las alas que se recogen.</dd>
+            <dt>Consejo</dt><dd>Si se tapan tus oídos, traga saliva, bosteza o mastica chicle.</dd>
+          </dl>
+        </details>
+        <details>
+          <summary><span class="num">5</span>Crucero</summary>
+          <dl>
+            <dt>Qué pasa</dt><dd>El avión vuela estable a gran altura. La mayor parte del viaje ocurre aquí.</dd>
+            <dt>Qué puedes oír</dt><dd>Un sonido constante del aire y de los motores.</dd>
+            <dt>Consejo</dt><dd>Ideal para escuchar música. Mantén el cinturón abrochado mientras estés en tu asiento.</dd>
+          </dl>
+        </details>
+        <details>
+          <summary><span class="num">6</span>Turbulencia</summary>
+          <dl>
+            <dt>Qué pasa</dt><dd>Es aire en movimiento, como los baches de un camino. Los pilotos la anticipan con pronósticos, avisos de otros aviones y el radar meteorológico, y a veces cambian de altura para evitarla.</dd>
+            <dt>Qué puedes sentir</dt><dd>Sacudidas o pequeñas caídas. Son incómodas, pero los aviones están diseñados y probados para soportarlas.</dd>
+            <dt>Consejo</dt><dd>Abróchate el cinturón, suelta los hombros y haz la respiración cuadrada.</dd>
+          </dl>
+        </details>
+        <details>
+          <summary><span class="num">7</span>Descenso</summary>
+          <dl>
+            <dt>Qué pasa</dt><dd>El avión baja poco a poco hacia el aeropuerto de destino y reduce la potencia.</dd>
+            <dt>Qué puedes sentir u oír</dt><dd>Oídos tapados, el zumbido de los flaps al extenderse y un golpe cuando baja el tren de aterrizaje.</dd>
+            <dt>Consejo</dt><dd>Traga o bosteza para que tus oídos se acomoden al cambio de presión.</dd>
+          </dl>
+        </details>
+        <details>
+          <summary><span class="num">8</span>Aterrizaje</summary>
+          <dl>
+            <dt>Qué pasa</dt><dd>El avión toca la pista y frena con los frenos de las ruedas y con ayuda de los motores.</dd>
+            <dt>Qué puedes sentir u oír</dt><dd>Un pequeño golpe al tocar tierra y un rugido fuerte de los motores al frenar. Es normal.</dd>
+            <dt>Consejo</dt><dd>Quédate en tu asiento con el cinturón abrochado hasta que se apague la señal.</dd>
+          </dl>
+        </details>
+      </div>
+      <p class="footnote">Información general y sencilla. Sigue siempre las instrucciones de la tripulación.</p>
+    </section>
+
+    <section id="respira" class="view" data-title="Respira" aria-labelledby="t-respira" hidden>
+      <h1 id="t-respira" tabindex="-1">Respira</h1>
+      <p class="lead">Respirar despacio ayuda a sentir más calma. Elige un ejercicio y sigue el círculo.</p>
+
+      <div class="card breath">
+        <fieldset class="choices">
+          <legend>Ejercicio</legend>
+          <label><input type="radio" name="patron" value="4-6" checked> Calma 4-6</label>
+          <label><input type="radio" name="patron" value="4-4-4-4"> Respiración cuadrada</label>
+        </fieldset>
+        <label class="inline">Duración
+          <select id="minutos">
+            <option value="1">1 minuto</option>
+            <option value="3" selected>3 minutos</option>
+            <option value="5">5 minutos</option>
+          </select>
+        </label>
+        <label class="inline"><input type="checkbox" id="guia-sonora" checked> Sonido guía</label>
+
+        <div class="circle-wrap" aria-hidden="true"><div id="circle" class="circle"></div></div>
+        <p id="cue" class="cue" aria-live="polite">Cuando quieras, empieza</p>
+        <p id="count" class="count" aria-hidden="true"></p>
+        <button id="breath-toggle" class="button" type="button">Empezar</button>
+      </div>
+
+      <div class="card">
+        <h2>Técnica 5-4-3-2-1</h2>
+        <p>Sirve para volver al presente cuando los nervios suben.</p>
+        <p id="ground-step" class="ground" aria-live="polite">Nombra 5 cosas que puedes ver.</p>
+        <button id="ground-next" class="button ghost" type="button">Siguiente</button>
+      </div>
+
+      <p class="footnote">Estos ejercicios no reemplazan la ayuda de un profesional de la salud. Si tu miedo es muy intenso, busca apoyo profesional.</p>
+    </section>
+
+    <section id="musica" class="view" data-title="Música" aria-labelledby="t-musica" hidden>
+      <h1 id="t-musica" tabindex="-1">Música para volar</h1>
+      <p class="lead">Sonidos relajantes que crea la propia app: no necesitan internet ni usan canciones con derechos de autor.</p>
+      <div id="tracks"></div>
+      <div class="card">
+        <label class="inline">Volumen <input id="volumen" type="range" min="0" max="1" step="0.05" value="0.8"></label>
+        <label class="inline">Apagar en
+          <select id="apagar">
+            <option value="0">Nunca</option>
+            <option value="15">15 minutos</option>
+            <option value="30">30 minutos</option>
+            <option value="60">60 minutos</option>
+          </select>
+        </label>
+        <p class="hint">Usa audífonos. Si no escuchas nada, sube el volumen o revisa el modo silencio del celular.</p>
+      </div>
+    </section>
+
+    <section id="planes" class="view" data-title="Planes" aria-labelledby="t-planes" hidden>
+      <h1 id="t-planes" tabindex="-1">Planes</h1>
+      <p class="lead">AeroMind es un emprendimiento simulado: estos precios se usan en el plan económico y la app no cobra nada.</p>
+      <div class="plans">
+        <article class="card plan">
+          <h2>Pase por vuelo</h2>
+          <p class="price">Bs 10 <span>por vuelo</span></p>
+          <p>Acceso completo durante un viaje.</p>
+        </article>
+        <article class="card plan">
+          <h2>Básico</h2>
+          <p class="price">Bs 15 <span>al mes</span></p>
+          <p>Música relajante y ejercicios básicos.</p>
+        </article>
+        <article class="card plan featured">
+          <h2>Premium</h2>
+          <p class="price">Bs 30 <span>al mes</span></p>
+          <p>Todo lo anterior, más contenido personalizado y más ejercicios.</p>
+        </article>
+        <article class="card plan">
+          <h2>Licencia para aerolíneas</h2>
+          <p class="price">Bs 3.000 <span>al mes</span></p>
+          <p>AeroMind para todos los pasajeros de la aerolínea.</p>
+        </article>
+      </div>
+      <p class="footnote">Simulación escolar: no hay pagos, registros ni datos personales.</p>
+    </section>
+  </main>
+
+  <nav class="tabbar" aria-label="Secciones">
+    <a href="#inicio"><svg><use href="#i-home"/></svg>Inicio</a>
+    <a href="#vuelo"><svg><use href="#i-plane"/></svg>Vuelo</a>
+    <a href="#respira"><svg><use href="#i-breath"/></svg>Respira</a>
+    <a href="#musica"><svg><use href="#i-music"/></svg>Música</a>
+    <a href="#planes"><svg><use href="#i-ticket"/></svg>Planes</a>
+  </nav>
+
+  <noscript><p class="footnote">AeroMind necesita JavaScript para la respiración guiada y la música.</p></noscript>
+</body>
+</html>
