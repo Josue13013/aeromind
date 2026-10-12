@@ -162,24 +162,55 @@ window.addEventListener('online', updateNet);
 window.addEventListener('offline', updateNet);
 updateNet();
 
-let installPrompt = null;
+const INSTALLED_KEY = 'aeromind-instalada';
 const installButton = $('#install');
+const iosTip = $('#ios-tip');
+const installedNote = $('#installed-note');
+const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+let installPrompt = null;
+
+function wasInstalled() {
+  try { return localStorage.getItem(INSTALLED_KEY) === '1'; } catch { return false; }
+}
+
+function markInstalled() {
+  try { localStorage.setItem(INSTALLED_KEY, '1'); } catch { }
+  installPrompt = null;
+  installButton.hidden = true;
+  iosTip.hidden = true;
+  installedNote.hidden = false;
+}
+
+if (standalone || wasInstalled()) markInstalled();
+else if (/iphone|ipad|ipod/i.test(navigator.userAgent)) iosTip.hidden = false;
+
 window.addEventListener('beforeinstallprompt', (event) => {
   event.preventDefault();
+  if (standalone || wasInstalled()) return;
   installPrompt = event;
   installButton.hidden = false;
 });
+window.addEventListener('appinstalled', markInstalled);
 installButton.addEventListener('click', async () => {
   if (!installPrompt) return;
   installPrompt.prompt();
-  await installPrompt.userChoice;
-  installPrompt = null;
-  installButton.hidden = true;
+  const { outcome } = await installPrompt.userChoice;
+  if (outcome === 'accepted') markInstalled();
+  else installButton.hidden = true;
 });
-const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
-if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !standalone) $('#ios-tip').hidden = false;
+$('#ios-done').addEventListener('click', markInstalled);
+navigator.getInstalledRelatedApps?.()
+  .then((apps) => { if (apps.length > 0) markInstalled(); })
+  .catch(() => {});
 
 if ('serviceWorker' in navigator) {
+  const hadController = Boolean(navigator.serviceWorker.controller);
+  let reloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadController || reloading) return;
+    reloading = true;
+    location.reload();
+  });
   navigator.serviceWorker.register('./sw.js').catch(() => {});
   navigator.serviceWorker.ready.then(async () => {
     if (await caches.match('./index.html')) $('#offline-badge').hidden = false;

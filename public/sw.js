@@ -1,4 +1,4 @@
-const CACHE = 'aeromind-v1';
+const CACHE = 'aeromind-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -27,7 +27,8 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;
+  const url = new URL(request.url);
+  if (request.method !== 'GET' || url.origin !== self.location.origin || url.pathname.startsWith('/.netlify/')) return;
   if (request.mode === 'navigate') {
     event.respondWith(caches.match('./index.html').then((cached) => cached || fetch(request)));
     return;

@@ -3,7 +3,7 @@ const TICK_MS = 500;
 
 export const TRACKS = {
   cabina: { nombre: 'Cabina tranquila', detalle: 'Un zumbido grave y parejo, como el de la cabina en pleno vuelo.' },
-  lluvia: { nombre: 'Lluvia suave', detalle: 'Lluvia ligera para dejar de escuchar los ruidos de alrededor.' },
+  arpa: { nombre: 'Arpa al atardecer', detalle: 'Notas de arpa que suben y bajan despacio, sobre acordes suaves.' },
   acordes: { nombre: 'Acordes para respirar', detalle: 'Acordes lentos que suben 4 segundos y bajan 6: respira con ellos.' },
   campanas: { nombre: 'Campanas lejanas', detalle: 'Notas suaves y espaciadas, con eco.' },
 };
@@ -53,29 +53,74 @@ function buildCabina(ctx, out) {
   return { nodes: [src, lfo], schedule: () => {} };
 }
 
-function buildLluvia(ctx, out) {
-  const src = loopedNoise(ctx);
-  const bed = gain(ctx, 0.5);
-  chain(src, filter(ctx, 'highpass', 500), filter(ctx, 'lowpass', 5000), bed, out);
-  const lfo = ctx.createOscillator();
-  lfo.frequency.value = 0.13;
-  chain(lfo, gain(ctx, 0.12), bed.gain);
-  const dropBuffer = noiseBuffer(ctx, 1);
-  src.start();
-  lfo.start();
+const ARPA_CHORDS = [
+  [130.81, 196.0, 261.63, 329.63, 392.0],
+  [110.0, 164.81, 220.0, 261.63, 329.63],
+  [87.31, 130.81, 174.61, 220.0, 261.63],
+  [98.0, 146.83, 196.0, 246.94, 293.66],
+];
+const ARPA_PATTERN = [0, 1, 2, 3, 4, 3, 2, 1];
+const ARPA_STEP_S = 0.75;
+const PLUCK_S = 2.6;
+
+function pluckBuffer(ctx, frequency) {
+  const rate = ctx.sampleRate;
+  const length = Math.floor(rate * PLUCK_S);
+  const buffer = ctx.createBuffer(1, length, rate);
+  const y = buffer.getChannelData(0);
+  const period = Math.round(rate / frequency);
+  let smooth = 0;
+  let mean = 0;
+  for (let i = 0; i < period; i++) {
+    smooth = smooth * 0.55 + (Math.random() * 2 - 1) * 0.45;
+    y[i] = smooth;
+    mean += smooth / period;
+  }
+  let peak = 0;
+  for (let i = 0; i < period; i++) {
+    y[i] -= mean;
+    peak = Math.max(peak, Math.abs(y[i]));
+  }
+  for (let i = 0; i < period; i++) y[i] /= peak;
+  for (let i = period; i < length; i++) {
+    const a = y[i - period];
+    const b = i - period - 1 >= 0 ? y[i - period - 1] : a;
+    y[i] = 0.996 * 0.5 * (a + b);
+  }
+  const fade = Math.floor(rate * 0.5);
+  for (let i = 0; i < fade; i++) y[length - fade + i] *= 1 - i / fade;
+  return buffer;
+}
+
+function buildArpa(ctx, out) {
+  const dry = gain(ctx, 1);
+  const delay = ctx.createDelay(2);
+  delay.delayTime.value = 0.38;
+  const feedback = gain(ctx, 0.3);
+  const damp = filter(ctx, 'lowpass', 3000);
+  chain(dry, out);
+  chain(dry, delay, damp, feedback, delay);
+  chain(damp, gain(ctx, 0.3), out);
+  const buffers = new Map();
+  const pluck = (f) => {
+    if (!buffers.has(f)) buffers.set(f, pluckBuffer(ctx, f));
+    return buffers.get(f);
+  };
+  let step = 0;
+  let next = null;
   return {
-    nodes: [src, lfo],
+    nodes: [],
     schedule(from, to) {
-      for (let t = from; t < to; t += 0.04 + Math.random() * 0.14) {
-        const drop = ctx.createBufferSource();
-        drop.buffer = dropBuffer;
-        const env = gain(ctx, 0);
-        chain(drop, filter(ctx, 'bandpass', 1800 + Math.random() * 2600, 3), env, out);
-        const peak = 0.05 + Math.random() * 0.12;
-        env.gain.setValueAtTime(0, t);
-        env.gain.linearRampToValueAtTime(peak, t + 0.003);
-        env.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
-        drop.start(t, Math.random() * 0.9, 0.06);
+      if (next === null) next = from;
+      for (; next < to; next += ARPA_STEP_S) {
+        const chord = ARPA_CHORDS[Math.floor(step / ARPA_PATTERN.length) % ARPA_CHORDS.length];
+        const index = ARPA_PATTERN[step % ARPA_PATTERN.length];
+        step++;
+        const src = ctx.createBufferSource();
+        src.buffer = pluck(chord[index]);
+        const level = (index === 0 ? 0.3 : 0.2) + Math.random() * 0.06;
+        chain(src, gain(ctx, level), dry);
+        src.start(next + Math.random() * 0.04);
       }
     },
   };
@@ -175,7 +220,7 @@ function buildCampanas(ctx, out) {
   };
 }
 
-const BUILDERS = { cabina: buildCabina, lluvia: buildLluvia, acordes: buildAcordes, campanas: buildCampanas };
+const BUILDERS = { cabina: buildCabina, arpa: buildArpa, acordes: buildAcordes, campanas: buildCampanas };
 
 function masterChain(ctx, destination) {
   const level = gain(ctx, 0.8);
